@@ -3,9 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LoginForm } from '@/components/LoginForm';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import Dashboard from './Dashboard';
+import SuperAdminDashboard from './SuperAdminDashboard';
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isSuperAdmin } = useAuth();
 
   if (loading) {
     return (
@@ -21,7 +22,7 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <Dashboard />
+      {isSuperAdmin ? <SuperAdminDashboard /> : <Dashboard />}
     </DashboardLayout>
   );
 };

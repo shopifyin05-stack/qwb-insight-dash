@@ -3,28 +3,15 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard, 
-  ShoppingCart, 
-  Package, 
-  BarChart3, 
-  Users, 
-  Settings,
+  Plus,
   LogOut,
   Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Orders', href: '/orders', icon: ShoppingCart },
-  { name: 'Products', href: '/products', icon: Package },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Customers', href: '/customers', icon: Users },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
-
 export function Sidebar() {
-  const { user, logout, isBikram } = useAuth();
+  const { user, logout, isBikram, isSuperAdmin } = useAuth();
   const location = useLocation();
 
   return (
@@ -51,7 +38,7 @@ export function Sidebar() {
           <div>
             <p className="text-sm font-medium text-foreground">{user?.full_name}</p>
             <p className="text-xs text-muted-foreground">
-              {isBikram ? 'Partner (30% Share)' : 'Admin'}
+              {isBikram ? 'Partner (30% Share)' : isSuperAdmin ? 'Super Admin' : 'Admin'}
             </p>
           </div>
         </div>
@@ -59,26 +46,27 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navigation.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.href;
-          
-          return (
-            <NavLink
-              key={item.name}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {item.name}
-            </NavLink>
-          );
-        })}
+        {/* Dashboard - Always visible */}
+        <NavLink
+          to="/"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+            location.pathname === '/' 
+              ? "bg-primary text-primary-foreground" 
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
+        </NavLink>
+        
+        {/* Add Orders - Only for Super Admin */}
+        {isSuperAdmin && (
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground">
+            <Plus className="h-4 w-4" />
+            Add Orders
+          </div>
+        )}
       </nav>
 
       {/* Logout */}

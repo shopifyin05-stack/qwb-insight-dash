@@ -14,6 +14,7 @@ interface AuthContextType {
   logout: () => void;
   loading: boolean;
   isBikram: boolean;
+  isSuperAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const isBikram = user?.email === 'bray22610@gmail.com';
+  const isSuperAdmin = user?.email === 'krrishyogi18@gmail.com';
 
   useEffect(() => {
     // Check if user is already logged in
@@ -35,13 +37,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // For demo purposes, we'll use simple credential check
+      // Check Bikram's credentials
       if (email === 'bray22610@gmail.com' && password === 'Hunter@05') {
         const userData = {
           id: '1',
           email: 'bray22610@gmail.com',
           full_name: 'Bikram',
           role: 'admin'
+        };
+        setUser(userData);
+        localStorage.setItem('qwb_admin_user', JSON.stringify(userData));
+        return {};
+      }
+      // Check Super Admin credentials
+      else if (email === 'krrishyogi18@gmail.com' && password === 'Krish@2817') {
+        const userData = {
+          id: '2',
+          email: 'krrishyogi18@gmail.com',
+          full_name: 'Super Admin',
+          role: 'super_admin'
         };
         setUser(userData);
         localStorage.setItem('qwb_admin_user', JSON.stringify(userData));
@@ -60,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, isBikram }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, isBikram, isSuperAdmin }}>
       {children}
     </AuthContext.Provider>
   );
